@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Automated Grading System</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<canvas id="bgParticles"></canvas>
+
+<div class="container">
+    <div class="header">
+        <h1>Automated Short Answer Grading</h1>
+        <p>Grade answers instantly with AI-powered scoring!</p>
+    </div>
+
+    <div class="glass-card">
+        <textarea id="model_answer" placeholder=" "></textarea>
+        <label>Model Answer</label>
+    </div>
+
+    <div class="glass-card">
+        <textarea id="student_answer" placeholder=" "></textarea>
+        <label>Student Answer</label>
+    </div>
+
+    <button id="gradeBtn">Grade Answer</button>
+
+    <div class="score-circle">
+        <svg width="180" height="180">
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ff416c"/>
+                    <stop offset="50%" stop-color="#ff4b2b"/>
+                    <stop offset="100%" stop-color="#00c6ff"/>
+                </linearGradient>
+            </defs>
+            <circle cx="90" cy="90" r="80" stroke="#eee" stroke-width="18" fill="none"/>
+            <circle id="progressCircle" cx="90" cy="90" r="80" stroke="url(#gradient)" stroke-width="18" fill="none"
+                    stroke-linecap="round" stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
+        </svg>
+        <div class="score-text" id="scoreText">0%</div>
+    </div>
+
+    <canvas id="confetti"></canvas>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
