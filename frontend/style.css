@@ -1,14 +1,21 @@
-/* Reset & body */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh; /* Allow growth */
+  width: 100vw;
+  overflow-y: auto; /* Enable vertical scroll if needed */
+  overflow-x: hidden; /* Prevent horizontal scroll */
   display: flex;
   justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg,#667eea,#764ba2);
+  align-items: center; /* Center vertically if space permits */
+  /* Deep Dark Gradient Background */
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+  background-size: 50px 50px, 50px 50px, 100% 100%;
+  color: #fff;
   position: relative;
 }
 
@@ -17,108 +24,236 @@ canvas#bgParticles, canvas#confetti {
   top: 0;
   left: 0;
   z-index: 0;
+  pointer-events: none;
 }
 
-/* Container */
+/* Floating background blobs for extra depth */
+body::before, body::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    z-index: 0;
+    animation: floatBlob 20s infinite alternate ease-in-out;
+}
+body::before {
+    background: #00c6ff;
+    top: -100px;
+    left: -100px;
+}
+body::after {
+    background: #764ba2;
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -10s;
+}
+
+@keyframes floatBlob {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
 .container {
   position: relative;
   z-index: 1;
-  width: 500px;
-  max-width: 95%;
+  width: 100%;
+  max-width: 1200px; /* Wider */
   text-align: center;
-  padding: 20px;
+  padding: 20px; /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Entrance Animation */
+  animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-/* Header */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .header h1 {
-  font-size: 36px;
+  font-size: 42px; /* Slightly smaller to fit */
   color: #fff;
   margin-bottom: 5px;
-  text-shadow: 0 0 15px rgba(0,0,0,0.3);
-}
-.header p {
-  color: #ddd;
-  margin-bottom: 30px;
+  text-shadow: 0 0 30px rgba(0, 198, 255, 0.6);
+  letter-spacing: 2px;
+  font-weight: 700;
 }
 
-/* Glassmorphic cards */
+.header p {
+  color: #a0a0a0;
+  margin-bottom: 30px; /* Reduced */
+  font-size: 16px;
+  font-weight: 300;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Grid layout for inputs to make use of wider screen */
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px; /* Reduced gap */
+    width: 100%;
+    margin-bottom: 20px; /* Reduced */
+}
+
 .glass-card {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(15px);
-  border-radius: 25px;
-  margin-bottom: 20px;
-  padding: 25px;
+  /* Dark Glassmorphism */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 20px; /* Reduced padding */
   position: relative;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-  transition: transform 0.3s ease;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease;
+  height: 100%; /* Fill grid cell */
+  display: flex;
+  flex-direction: column;
 }
-.glass-card:hover {
-  transform: translateY(-5px);
+
+.glass-card:hover { 
+    transform: translateY(-10px) scale(1.02); 
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
+
 .glass-card textarea {
   width: 100%;
-  height: 80px;
+  flex-grow: 1; /* Fill remaining height */
+  min-height: 100px; /* Slightly shorter default */
   background: transparent;
   border: none;
   outline: none;
   resize: none;
-  color: #fff;
-  font-size: 16px;
+  color: #eee;
+  font-size: 16px; 
   padding: 10px;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
 }
+
+/* Custom Scrollbar for Textarea */
+.glass-card textarea::-webkit-scrollbar {
+    width: 6px;
+}
+.glass-card textarea::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.02); 
+}
+.glass-card textarea::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1); 
+    border-radius: 3px;
+}
+
 .glass-card label {
   position: absolute;
-  left: 30px;
-  top: 18px;
-  color: #ccc;
+  left: 20px;
+  top: 20px; /* Adjusted for padding */
+  color: #666;
   pointer-events: none;
-  transition: 0.2s ease all;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  font-weight: 500;
+  font-size: 14px;
 }
+
 .glass-card textarea:focus + label,
 .glass-card textarea:not(:placeholder-shown) + label {
   top: -10px;
+  left: 15px;
   font-size: 12px;
-  color: #fff;
+  color: #00c6ff;
+  background: #0d1219;
+  padding: 0 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-/* Button */
 button {
-  padding: 18px 35px;
+  padding: 12px 40px; /* Smaller button */
   border: none;
-  border-radius: 30px;
-  background: #764ba2;
+  border-radius: 60px;
+  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
   color: #fff;
-  font-size: 20px;
+  font-size: 16px; /* Smaller text */
+  font-weight: 800;
   cursor: pointer;
-  margin-top: 15px;
-  transition: all 0.3s ease;
-}
-button:hover {
-  background: #667eea;
-  transform: scale(1.07);
+  margin-top: 40px; /* Pushed down further */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 30px rgba(0, 198, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Score circle */
+button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: 0.5s;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover { 
+    transform: scale(1.1); 
+    box-shadow: 0 0 50px rgba(0, 198, 255, 0.8);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
 .score-circle {
   position: relative;
-  margin: 30px auto;
-  width: 180px;
-  height: 180px;
+  margin: 25px auto; /* Reduced margin */
+  width: 220px; 
+  height: 220px;
+  filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
 }
-.score-circle svg {
-  transform: rotate(-90deg);
+
+.score-circle svg { 
+    transform: rotate(-90deg); 
+    width: 220px; 
+    height: 220px; 
 }
+/* Re-centering circles within simpler SVG viewbox logic if needed, 
+   but easier to just scale SVG via CSS width/height */
+
 .score-text {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: #fff;
-  font-size: 32px;
-  font-weight: bold;
-  text-shadow: 0 0 15px rgba(0,0,0,0.5);
+  font-size: 48px;
+  font-weight: 800;
+  text-shadow: 0 0 30px rgba(255,255,255,0.5);
 }
-canvas#bgParticles,
-canvas#confetti {
-    pointer-events: none; /* <-- this allows clicking through the canvas */
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .container {
+        padding: 20px;
+    }
+    .header h1 { font-size: 32px; }
 }
+
