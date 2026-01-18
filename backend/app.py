@@ -17,6 +17,17 @@ def grade():
     model_ans = data["model_answer"]
     student_ans = data["student_answer"]
 
+    # 0. Check for exact match first
+    if model_ans.strip().lower() == student_ans.strip().lower():
+        return jsonify({
+            "score": 100.0,
+            "status": "Correct",
+            "details": {
+                "rubric_score": 100.0,
+                "similarity_score": 100.0
+            }
+        })
+
     # 1. Rubric Scoring (Keyword Matching)
     def extract_keywords(text):
         # Remove punctuation and converting to lower case

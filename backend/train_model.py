@@ -1,17 +1,38 @@
 import joblib
+import sys
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from datasets import load_dataset
+
+
+# Workaround for Python 3.12 multiprocess/resource_tracker AttributeError on exit
+if sys.version_info >= (3, 12):
+    try:
+        from multiprocess import resource_tracker
+        def patched_stop(self, *args, **kwargs):
+            with self._lock:
+                if self._fd is None:
+                    return
+                try:
+                    os.close(self._fd)
+                except OSError:
+                    pass
+                self._fd = None
+        resource_tracker.ResourceTracker._stop = patched_stop
+    except (ImportError, AttributeError):
+        pass
 
 if __name__ == "__main__":
     print("Loading SciEntsBank dataset from Hugging Face...")
     # Load the SciEntsBank dataset (train split)
     try:
-        dataset = load_dataset("allenai/scientsbank", "2_way", split="train")
+        # Note: Corrected dataset path from allenai/scientsbank to nkazi/SciEntsBank
+        dataset = load_dataset("nkazi/SciEntsBank", split="train")
         print(f"Dataset loaded: {len(dataset)} examples")
 
-        questions = dataset['question']
-        reference_answers = dataset['reference_answer']
-        student_answers = dataset['student_answer']
+        questions = list(dataset['question'])
+        reference_answers = list(dataset['reference_answer'])
+        student_answers = list(dataset['student_answer'])
         corpus = list(set(questions + reference_answers + student_answers))
 
     except Exception as e:

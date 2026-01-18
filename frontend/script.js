@@ -88,38 +88,47 @@ gradeBtn.addEventListener("click", ()=>{
       student_answer: student
     })
   })
-  .then(data=>{
-    if(data.status === "Wrong"){
-        // Show Wrong message
-        scoreText.innerText = "Wrong!";
-        progressCircle.style.strokeDashoffset = 628;
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "Wrong") {
+      // Show Wrong message
+      scoreText.innerText = "Wrong!";
+      progressCircle.style.strokeDashoffset = 628;
     } else {
-        // Show Score animation
-        const score = data.score;
-        let count = 0;
-        const interval = setInterval(()=>{
-          if(count>=score){
-            clearInterval(interval);
-            if(score>=80){ showConfetti(); }
-          } else {
-            count++;
-            scoreText.innerText = `${count}%`;
-          }
-        }, 15);
+      // Show Score animation
+      const score = Math.min(100, Math.max(0, data.score || 0));
+      let count = 0;
+      const interval = setInterval(() => {
+        if (count >= score) {
+          clearInterval(interval);
+          scoreText.innerText = `${Math.round(score)}%`;
+          if (score >= 80) { showConfetti(); }
+        } else {
+          count++;
+          scoreText.innerText = `${count}%`;
+        }
+      }, 15);
 
-        animateCircle(score);
+      animateCircle(score);
     }
     
     // Show breakdown if it exists
-    if(data.details){
-        const detailDiv = document.getElementById("scoreDetails") || document.createElement("div");
+    if (data.details) {
+      let detailDiv = document.getElementById("scoreDetails");
+      if (!detailDiv) {
+        detailDiv = document.createElement("div");
         detailDiv.id = "scoreDetails";
         detailDiv.style.color = "#aaa";
         detailDiv.style.fontSize = "14px";
         detailDiv.style.marginTop = "10px";
-        detailDiv.innerText = `Rubric: ${data.details.rubric_score}% | Similarity: ${data.details.similarity_score}%`;
         scoreText.parentElement.appendChild(detailDiv);
+      }
+      detailDiv.innerText = `Rubric: ${data.details.rubric_score}% | Similarity: ${data.details.similarity_score}%`;
     }
+  })
+  .catch(err => {
+    console.error("Grading error:", err);
+    scoreText.innerText = "Error!";
   });
 });
 
